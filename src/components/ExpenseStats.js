@@ -83,15 +83,12 @@ const ExpenseStats = ({ expenses }) => {
         {stats.map((stat, index) => (
           <div
             key={index}
-            className="relative p-6 rounded-2xl border border-gray-100 hover:border-gray-200 transition-all duration-300 group"
+            className="relative p-6 rounded-2xl border border-gray-100"
             style={{ 
               background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%)',
               backdropFilter: 'blur(20px)'
             }}
           >
-            {/* Gradient border on hover */}
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-transparent to-transparent group-hover:from-blue-500/10 group-hover:via-purple-500/10 group-hover:to-pink-500/10 transition-all duration-500"></div>
-            
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
                 <div

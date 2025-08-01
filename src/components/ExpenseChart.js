@@ -87,10 +87,10 @@ const ExpenseChart = ({ expenses }) => {
         <div className="flex gap-2 p-1 rounded-xl bg-gray-100">
           <button
             onClick={() => setChartType('pie')}
-            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 ${
               chartType === 'pie'
                 ? 'bg-white text-purple-600 shadow-md'
-                : 'text-gray-600 hover:text-gray-800'
+                : 'text-gray-600'
             }`}
           >
             <PieChartIcon size={16} />
@@ -98,10 +98,10 @@ const ExpenseChart = ({ expenses }) => {
           </button>
           <button
             onClick={() => setChartType('bar')}
-            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 ${
               chartType === 'bar'
                 ? 'bg-white text-purple-600 shadow-md'
-                : 'text-gray-600 hover:text-gray-800'
+                : 'text-gray-600'
             }`}
           >
             <BarChart3 size={16} />

@@ -115,7 +115,7 @@ const ExpenseList = ({ expenses, onDelete, onEdit }) => {
         {sortedAndFilteredExpenses.map(expense => (
           <div
             key={expense.id}
-            className="group relative p-6 rounded-2xl border border-gray-100 hover:border-gray-200 transition-all duration-300 hover:shadow-lg"
+            className="relative p-6 rounded-2xl border border-gray-100"
             style={{ 
               background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
               backdropFilter: 'blur(20px)'
@@ -151,17 +151,17 @@ const ExpenseList = ({ expenses, onDelete, onEdit }) => {
                     -${expense.amount.toFixed(2)}
                   </span>
                 </div>
-                <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="flex gap-2">
                   <button
                     onClick={() => onEdit(expense)}
-                    className="p-3 rounded-xl bg-blue-50 hover:bg-blue-100 transition-colors duration-200"
+                    className="p-3 rounded-xl bg-blue-50"
                     title="Edit expense"
                   >
                     <Edit size={18} className="text-blue-600" />
                   </button>
                   <button
                     onClick={() => onDelete(expense.id)}
-                    className="p-3 rounded-xl bg-red-50 hover:bg-red-100 transition-colors duration-200"
+                    className="p-3 rounded-xl bg-red-50"
                     title="Delete expense"
                   >
                     <Trash2 size={18} className="text-red-600" />
