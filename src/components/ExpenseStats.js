@@ -1,5 +1,5 @@
 import React from 'react';
-import { DollarSign, TrendingUp, Calendar, Target } from 'lucide-react';
+import { DollarSign, TrendingUp, Calendar, Target, TrendingDown } from 'lucide-react';
 
 const ExpenseStats = ({ expenses }) => {
   const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
@@ -13,6 +13,17 @@ const ExpenseStats = ({ expenses }) => {
     return expenseDate.getMonth() === currentMonth && expenseDate.getFullYear() === currentYear;
   });
   const currentMonthTotal = currentMonthExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+
+  // Get previous month for comparison
+  const previousMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+  const previousYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+  const previousMonthExpenses = expenses.filter(expense => {
+    const expenseDate = new Date(expense.date);
+    return expenseDate.getMonth() === previousMonth && expenseDate.getFullYear() === previousYear;
+  });
+  const previousMonthTotal = previousMonthExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+  
+  const monthChange = previousMonthTotal > 0 ? ((currentMonthTotal - previousMonthTotal) / previousMonthTotal) * 100 : 0;
 
   // Get most expensive category
   const categoryTotals = expenses.reduce((acc, expense) => {
@@ -29,58 +40,101 @@ const ExpenseStats = ({ expenses }) => {
       title: 'Total Expenses',
       value: `$${totalExpenses.toFixed(2)}`,
       icon: DollarSign,
-      color: '#FF6B6B',
-      description: `${expenses.length} transactions`
+      gradient: 'linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%)',
+      description: `${expenses.length} transactions`,
+      change: null
     },
     {
       title: 'Average Expense',
       value: `$${averageExpense.toFixed(2)}`,
       icon: TrendingUp,
-      color: '#4ECDC4',
-      description: 'Per transaction'
+      gradient: 'linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%)',
+      description: 'Per transaction',
+      change: null
     },
     {
       title: 'This Month',
       value: `$${currentMonthTotal.toFixed(2)}`,
       icon: Calendar,
-      color: '#45B7D1',
-      description: `${currentMonthExpenses.length} transactions`
+      gradient: 'linear-gradient(135deg, #45B7D1 0%, #96C93D 100%)',
+      description: `${currentMonthExpenses.length} transactions`,
+      change: monthChange
     },
     {
       title: 'Top Category',
       value: mostExpensiveCategory,
       icon: Target,
-      color: '#96CEB4',
-      description: mostExpensiveCategory !== 'None' ? `$${categoryTotals[mostExpensiveCategory]?.toFixed(2)}` : 'No expenses yet'
+      gradient: 'linear-gradient(135deg, #96CEB4 0%, #FFEAA7 100%)',
+      description: mostExpensiveCategory !== 'None' ? `$${categoryTotals[mostExpensiveCategory]?.toFixed(2)}` : 'No expenses yet',
+      change: null
     }
   ];
 
   return (
     <div className="card">
-      <h2 className="text-2xl font-bold mb-6">Statistics</h2>
-      <div className="grid grid-2 gap-4">
+      <div className="flex items-center gap-3 mb-8">
+        <div className="p-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600">
+          <TrendingUp size={24} className="text-white" />
+        </div>
+        <h2 className="text-3xl font-bold text-gray-800">Financial Overview</h2>
+      </div>
+      
+      <div className="grid grid-2 gap-6">
         {stats.map((stat, index) => (
           <div
             key={index}
-            className="p-4 rounded-lg border border-gray-200"
-            style={{ backgroundColor: '#fafafa' }}
+            className="relative p-6 rounded-2xl border border-gray-100 hover:border-gray-200 transition-all duration-300 group"
+            style={{ 
+              background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%)',
+              backdropFilter: 'blur(20px)'
+            }}
           >
-            <div className="flex items-center gap-3 mb-2">
-              <div
-                className="p-2 rounded-lg"
-                style={{ backgroundColor: `${stat.color}20` }}
-              >
-                <stat.icon size={20} style={{ color: stat.color }} />
+            {/* Gradient border on hover */}
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-transparent to-transparent group-hover:from-blue-500/10 group-hover:via-purple-500/10 group-hover:to-pink-500/10 transition-all duration-500"></div>
+            
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div
+                  className="p-3 rounded-xl"
+                  style={{ background: stat.gradient }}
+                >
+                  <stat.icon size={24} className="text-white" />
+                </div>
+                {stat.change !== null && (
+                  <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
+                    stat.change > 0 
+                      ? 'bg-red-100 text-red-600' 
+                      : 'bg-green-100 text-green-600'
+                  }`}>
+                    {stat.change > 0 ? <TrendingDown size={12} /> : <TrendingUp size={12} />}
+                    {Math.abs(stat.change).toFixed(1)}%
+                  </div>
+                )}
               </div>
-              <h3 className="font-semibold text-gray-700">{stat.title}</h3>
+              
+              <h3 className="text-lg font-semibold text-gray-700 mb-2">{stat.title}</h3>
+              <div className="text-3xl font-bold mb-2" style={{ 
+                background: stat.gradient,
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent'
+              }}>
+                {stat.value}
+              </div>
+              <p className="text-sm text-gray-600 font-medium">{stat.description}</p>
             </div>
-            <div className="text-2xl font-bold mb-1" style={{ color: stat.color }}>
-              {stat.value}
-            </div>
-            <p className="text-sm text-gray-600">{stat.description}</p>
           </div>
         ))}
       </div>
+      
+      {expenses.length === 0 && (
+        <div className="text-center py-12">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-100 to-purple-100 flex items-center justify-center">
+            <DollarSign size={32} className="text-gray-400" />
+          </div>
+          <h3 className="text-xl font-semibold text-gray-600 mb-2">No Data Yet</h3>
+          <p className="text-gray-500">Add your first expense to see beautiful statistics!</p>
+        </div>
+      )}
     </div>
   );
 };
